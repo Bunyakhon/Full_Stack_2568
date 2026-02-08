@@ -1,7 +1,8 @@
 const express = require('express');
 const sqlite3 = require('sqlite3');
+require("dotenv").config();
 const app =express();
-
+const port = process.env.PORT || 3000;
 const db = new sqlite3.Database('./Database/Book.sqlite3');
 
 app.use(express.json());
@@ -22,7 +23,7 @@ app.get('/books',(req,res) =>{
     });
 });
 
-app.get('books/:id',(req,res) => {
+app.get('/books/:id',(req,res) => {
     db.get('SELECT * FROM books WHERE id = ?', req.params.id ,(err,row) => {
         if(err){
             res.status(500);
@@ -37,7 +38,7 @@ app.get('books/:id',(req,res) => {
 });
 
 
-app.post('books',(req,res) => {
+app.post('/books',(req,res) => {
     const book = req.body;
     db.run('INSERT INTO books (title,author) VALUES (?, ?)' ,book.title, book.author, function(err){
         if(err){
@@ -69,6 +70,8 @@ app.delete('/books/:id',(req,res) => {
         }
     });
 });
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`);
+});
 
-const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
